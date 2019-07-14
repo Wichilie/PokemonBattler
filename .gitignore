@@ -1,0 +1,14 @@
+# vs code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# C#
+bin/*
+obj/*
+
+# simulation implementations
+PokemonBattler/simulation/*
+!PokemonBattler/simulation/README.md
