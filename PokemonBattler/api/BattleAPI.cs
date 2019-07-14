@@ -2,7 +2,6 @@ namespace PokemonBattler
 {
     namespace BattleAPI
     {
-        /*
         struct BattleConfig
         {
             // todo
@@ -29,6 +28,5 @@ namespace PokemonBattler
             // do a turn with the given configuration
             void DoTurn(TurnConfig tc);
         }
-        */
     }
 }
