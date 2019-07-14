@@ -8,7 +8,8 @@ namespace PokemonBattler
         static void Main(string[] args)
         {
             // todo
-            throw new NotImplementedException();
+            Showdown sd = new Showdown();
+            
         }
     }
 }

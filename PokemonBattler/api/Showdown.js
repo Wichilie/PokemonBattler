@@ -2,6 +2,8 @@ const Sim = require('../simulation/showdown/.sim-dist/battle-stream');
 const ReadLine = require('readline');
 stream = new Sim.BattleStream();
 
+console.log("test");
+
 // redirect showdown output to console
 (async () => {
 	let output;

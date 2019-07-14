@@ -21,7 +21,7 @@ namespace PokemonBattler
             void InitSimulator();
 
             // start a battle with the given configuration
-            void StartBattle(BattleConfig bc);
+            void StartBattle();
 
             // get the current battle state
             BattleState GetState();
