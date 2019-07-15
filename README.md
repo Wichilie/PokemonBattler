@@ -1,4 +1,4 @@
 Pokémon Battler
 ------------------------------------------------------------------------
 
-A work-in-progress battling AI for Pokémon. More details will follow.
+A work-in-progress AI for random Pokémon battles. More details will follow.
