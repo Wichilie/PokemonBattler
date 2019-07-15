@@ -1,22 +1,13 @@
-const Sim = require('../simulation/showdown/.sim-dist/battle-stream');
 const ReadLine = require('readline');
-stream = new Sim.BattleStream();
+const Sim      = require('../../simulation/showdown/.sim-dist/battle-stream');
 
-console.log("test");
+battle = new Sim.BattleStream();
 
-// redirect showdown output to console
-(async () => {
-	let output;
-	while ((output = await stream.read())) {
-		console.log(output);
-	}
-})();
+// redirect showdown output to API
+(async () => { let rsp; 
+			   while ((rsp = await battle.read())) 
+			       process.stdout.write(rsp); })();
 
-// redirect input to showdown
-const rl = ReadLine.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-rl.on('line', (input) => {
-    console.log(input);
-});
+// redirect API input to showdown
+const input = ReadLine.createInterface(process.stdin);
+input.on('line', (cmd) => battle.write(cmd));
