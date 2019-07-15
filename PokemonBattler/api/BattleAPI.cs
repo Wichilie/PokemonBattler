@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+
 namespace PokemonBattler
 {
     namespace BattleAPI
     {
         struct BattleConfig
         {
-            // todo
+            string format;
         }
         struct BattleState
         {
