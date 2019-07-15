@@ -4,10 +4,6 @@ namespace PokemonBattler
 {
     namespace BattleAPI
     {
-        struct BattleConfig
-        {
-            string format;
-        }
         struct BattleState
         {
             // todo

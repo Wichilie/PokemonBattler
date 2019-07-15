@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace PokemonBattler
 {
@@ -7,7 +8,8 @@ namespace PokemonBattler
     {
         class Showdown : IBattleAPI
         {
-            Process showdown;
+            private Process showdown;
+            private List<string> response_buffer;
 
             public void InitSimulator()
             {
@@ -16,33 +18,58 @@ namespace PokemonBattler
 
             public void StartBattle()
             {
-                // init the showdown process
-                this.showdown = new Process();
-                showdown.StartInfo.FileName = "cmd.exe";
-                showdown.StartInfo.Arguments = "node Showdown.js";
-                showdown.StartInfo.CreateNoWindow = true;
-                showdown.StartInfo.UseShellExecute = false;
-                showdown.StartInfo.RedirectStandardInput = true;
-                showdown.StartInfo.RedirectStandardOutput = true;
-                showdown.Start();
+                Console.WriteLine("Starting new battle...");
+
+                // configure the showdown process and start it
+                showdown = new Process()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "node",
+                        Arguments = "Middleman.js",
+                        WorkingDirectory = "./PokemonBattler/api/showdown/",
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardInput = true,
+                        RedirectStandardOutput = true
+                    }
+                };
+                
+                showdown.OutputDataReceived += ReadResponse;
+                if (!showdown.Start()) 
+                {
+                    throw new Exception("Could not start Showdown instance.");
+                }
                 showdown.BeginOutputReadLine();
 
-                // init the battle
-                showdown.StandardInput.WriteLine(">start {\"formatid\":\"gen7randombattle\"}");
-                showdown.StandardInput.WriteLine(">player p1 {\"name\":\"Bot1\"}");
-                showdown.StandardInput.WriteLine(">player p2 {\"name\":\"Bot2\"}");
+                Console.WriteLine("Done");
+
+                // initialise the battle
+                GiveCommand(">start {\"formatid\":\"gen7randombattle\"}");
+                GiveCommand(">player p1 {\"name\":\"Bot1\"}");
+                GiveCommand(">player p2 {\"name\":\"Bot2\"}");
             }
 
-            // get the current battle state
-            public BattleState GetState() 
+            public BattleState GetState()
             {
                 // todo
                 return new BattleState();
             }
-            // do a turn with the given configuration
             public void DoTurn(TurnConfig tc)
             {
                 // todo
+            }
+
+            // pass a command to showdown
+            private void GiveCommand(string cmd)
+            {
+                response_buffer = new List<string>();
+                showdown.StandardInput.WriteLine(cmd);
+            }
+            // read a response from showdown
+            private void ReadResponse(object o, DataReceivedEventArgs d)
+            {
+                response_buffer.Add(d.Data);
             }
         }
     }

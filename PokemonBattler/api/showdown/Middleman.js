@@ -6,7 +6,7 @@ battle = new Sim.BattleStream();
 // redirect showdown output to API
 (async () => { let rsp; 
 			   while ((rsp = await battle.read())) 
-			       process.stdout.write(rsp); })();
+			       console.log(rsp); })();
 
 // redirect API input to showdown
 const input = ReadLine.createInterface(process.stdin);
