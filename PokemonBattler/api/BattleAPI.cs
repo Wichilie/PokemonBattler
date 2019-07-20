@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace PokemonBattler
 {
     namespace BattleAPI
@@ -18,7 +16,7 @@ namespace PokemonBattler
             // launch the simulator
             void InitSimulator();
 
-            // start a battle with the given configuration
+            // start a battle
             void StartBattle();
 
             // get the current battle state
