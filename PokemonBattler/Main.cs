@@ -1,4 +1,5 @@
-﻿using PokemonBattler.BattleAPI.Showdown;
+﻿using System.Threading;
+using PokemonBattler.BattleAPI.Showdown;
 
 class Program
 {
@@ -7,5 +8,6 @@ class Program
         // temporary debugging...
         Showdown sd = new Showdown();
         sd.StartBattle();
+        Thread.Sleep(3000);
     }
 }

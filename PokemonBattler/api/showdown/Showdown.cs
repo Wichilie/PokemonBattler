@@ -29,20 +29,23 @@ namespace PokemonBattler
                             WorkingDirectory = "./PokemonBattler/api/showdown/",
                             CreateNoWindow = true,
                             UseShellExecute = false,
+                            RedirectStandardError = true,
                             RedirectStandardInput = true,
                             RedirectStandardOutput = true
                         }
                     };
 
-                    showdown.OutputDataReceived += ReadResponse;
+                    showdown.ErrorDataReceived += ReadError;
+                    showdown.OutputDataReceived += ReadOutput;
                     if (!showdown.Start())
                     {
                         throw new Exception("Could not start Showdown instance.");
                     }
+                    showdown.BeginErrorReadLine();
                     showdown.BeginOutputReadLine();
 
                     // initialise the battle
-                    GiveCommand(">start {\"formatid\":\"gen7randombattle\", p1 {\"name\":\"Bot1\"}, p2 {\"name\":\"Bot2\"}}");
+                    GiveCommand(@">start {""formatid"":""gen7randombattle"", ""p1"":{""name"":""bot1""}, ""p2"":{""name"":""bot2""}}");
                 }
 
                 public BattleState GetState()
@@ -59,10 +62,29 @@ namespace PokemonBattler
                 {
                     showdown.StandardInput.WriteLine(cmd);
                 }
-                // read a response from showdown
-                private void ReadResponse(object o, DataReceivedEventArgs d)
+                // read an error from showdown
+                private void ReadError(object o, DataReceivedEventArgs d)
                 {
-                    // todo
+                    throw new Exception("Showdown threw the following exception: " + d.Data);
+                }
+                // read a response from showdown
+                private void ReadOutput(object o, DataReceivedEventArgs d)
+                {
+                    string[] message = d.Data.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                    // ignore empty messages
+                    if (message.Length == 0)
+                    {
+                        return;
+                    }
+
+                    // handle the different message types
+                    switch (message[0])
+                    {
+                        // todo
+                        default:
+                            Console.WriteLine(@"Warning: unhandled message of type ""{0}"": {1}", message[0], d.Data);
+                            break;
+                    }
                 }
             }
         }
