@@ -1,15 +1,11 @@
-﻿using System;
-using PokemonBattler.BattleAPI;
+﻿using PokemonBattler.BattleAPI.Showdown;
 
-namespace PokemonBattler
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            // todo
-            Showdown sd = new Showdown();
-            
-        }
+        // temporary debugging...
+        Showdown sd = new Showdown();
+        sd.StartBattle();
     }
 }
