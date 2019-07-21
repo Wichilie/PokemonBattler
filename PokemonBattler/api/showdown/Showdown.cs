@@ -65,7 +65,7 @@ namespace PokemonBattler
                 // read an error from showdown
                 private void ReadError(object o, DataReceivedEventArgs d)
                 {
-                    throw new Exception("Showdown threw the following exception: " + d.Data);
+                    throw new Exception($"Showdown threw the following exception: {d.Data}");
                 }
                 // read a response from showdown
                 private void ReadOutput(object o, DataReceivedEventArgs d)
@@ -82,7 +82,7 @@ namespace PokemonBattler
                     {
                         // todo
                         default:
-                            Console.WriteLine(@"Warning: unhandled message of type ""{0}"": {1}", message[0], d.Data);
+                            Console.WriteLine($@"Warning: unhandled message of type ""{message[0]}"": {d.Data}");
                             break;
                     }
                 }
