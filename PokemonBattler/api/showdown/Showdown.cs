@@ -34,15 +34,10 @@ namespace PokemonBattler
                             RedirectStandardOutput = true
                         }
                     };
-
-                    showdown.ErrorDataReceived += ReadError;
-                    showdown.OutputDataReceived += ReadOutput;
                     if (!showdown.Start())
                     {
                         throw new Exception("Could not start Showdown instance.");
                     }
-                    showdown.BeginErrorReadLine();
-                    showdown.BeginOutputReadLine();
 
                     // initialise the battle
                     GiveCommand(@">start {""formatid"":""gen7randombattle"", ""p1"":{""name"":""bot1""}, ""p2"":{""name"":""bot2""}}");
@@ -61,87 +56,112 @@ namespace PokemonBattler
                 private void GiveCommand(string cmd)
                 {
                     showdown.StandardInput.WriteLine(cmd);
+                    ProcessOutput();
                 }
-                // read an error from showdown
-                private void ReadError(object o, DataReceivedEventArgs d)
+                // process a response from showdown
+                private void ProcessOutput()
                 {
-                    throw new Exception($"Showdown threw the following exception: {d.Data}");
-                }
-                // read a response from showdown
-                private void ReadOutput(object o, DataReceivedEventArgs d)
-                {
-                    string[] parsed_output = d.Data.Split('|', StringSplitOptions.RemoveEmptyEntries);
-                    // ignore empty messages
-                    if (parsed_output.Length == 0)
+                    // read the message type and choose the correct line processor
+                    string msg_type = showdown.StandardOutput.ReadLine();
+                    Action<string[]> processor;
+                    switch (msg_type)
                     {
-                        return;
-                    }
-
-                    // handle the different message types
-                    switch (parsed_output[0])
-                    {
-                        #region UPDATE
                         case "update":
-                            // todo
+                            processor = process_update_line;
                             break;
-
-                        // metadata (irrelevant for us)
-                        case "player":
-                        case "teamsize":
-                        case "gametype":
-                        case "gen":
-                        case "tier":
-                        case "rated":
-                        case "rule":
-                        case "start":
-                        case "inactive":
-                        case "inactiveoff":
-                            break;
-
-                        // turn data
-                        case "split":
-                            // todo
-                            break;
-                        case "upkeep":
-                            break;
-                        case "turn":
-                            // todo
-                            break;
-
-                        // turn actions
-                        case "switch":
-                            // todo
-                            break;
-                        case "move":
-                            // todo
-                            break;
-                        
-                        // turn results
-                        // todo
-                        #endregion
-
-                        #region SIDEUPDATE
                         case "sideupdate":
-                            // todo
+                            processor = process_sideupdate_line;
                             break;
-
-                        // identifiers
-                        case "p1":
-                        case "p2":
-                            break;
-
-                        // choice request
-                        case "request":
-                            // todo
-                            break;
-                        #endregion
-
-                        #region UNIDENTIFIED
+#if DEBUG
                         default:
-                            Console.WriteLine($@"Warning: unhandled message of type ""{parsed_output[0]}"": {d.Data}");
-                            break;
-                            #endregion
+                            Console.WriteLine($@"Warning: ignored unrecognised message of type ""{msg_type}""");
+                            return;
+#endif
                     }
+
+                    // feed each individual message line to the line processor, while the delimiter (a double line ending) has not been reached
+                    string msg_line;
+                    string[] msg_line_parsed;
+                    while ((msg_line = showdown.StandardOutput.ReadLine()) != "")
+                    {
+                        msg_line_parsed = msg_line.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                        // ignore empty lines
+                        if (msg_line_parsed.Length == 0)
+                        {
+                            continue;
+                        }
+
+                        processor(msg_line_parsed);
+                    }
+
+                    #region LINE_PROCESSORS
+                    void process_update_line(string[] line_parsed)
+                    {
+                        switch (line_parsed[0])
+                        {
+                            // metadata (irrelevant for us)
+                            case "player":
+                            case "teamsize":
+                            case "gametype":
+                            case "gen":
+                            case "tier":
+                            case "rated":
+                            case "rule":
+                            case "start":
+                            case "inactive":
+                            case "inactiveoff":
+                                break;
+
+                            // turn data
+                            case "split":
+                                // todo
+                                break;
+                            case "upkeep":
+                                break;
+                            case "turn":
+                                // todo
+                                break;
+
+                            // turn actions
+                            case "switch":
+                                // todo
+                                break;
+                            case "move":
+                                // todo
+                                break;
+
+                            // turn results
+                            // todo
+
+#if DEBUG
+                            default:
+                                Console.WriteLine($@"Warning: ignored unrecognised message line of type ""{line_parsed[0]}""");
+                                return;
+#endif
+                        }
+                    }
+                    void process_sideupdate_line(string[] line_parsed)
+                    {
+                        switch (line_parsed[0])
+                        {
+                            // identifiers
+                            case "p1":
+                            case "p2":
+                                break;
+
+                            // choice request
+                            case "request":
+                                // todo
+                                break;
+
+#if DEBUG
+                            default:
+                                Console.WriteLine($@"Warning: ignored unrecognised message of type ""{msg_type}""");
+                                return;
+#endif
+                        }
+                    }
+                    #endregion
                 }
             }
         }
