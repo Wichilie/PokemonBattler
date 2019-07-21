@@ -63,14 +63,14 @@ namespace PokemonBattler
                 {
                     // read the message type and choose the correct line processor
                     string msg_type = showdown.StandardOutput.ReadLine();
-                    Action<string[]> processor;
+                    Func<string[], bool> processor;
                     switch (msg_type)
                     {
                         case "update":
-                            processor = process_update_line;
+                            processor = process_line_update;
                             break;
                         case "sideupdate":
-                            processor = process_sideupdate_line;
+                            processor = process_line_sideupdate;
                             break;
 #if DEBUG
                         default:
@@ -91,11 +91,18 @@ namespace PokemonBattler
                             continue;
                         }
 
-                        processor(msg_line_parsed);
+#if DEBUG
+                        if (!processor(msg_line_parsed))
+                        {
+                            Console.WriteLine($@"Warning: ignored unrecognised line in message of type ""{msg_type}"": {msg_line}");
+                        }
+#else
+                        processor(msg_line_parsed)
+#endif
                     }
 
                     #region LINE_PROCESSORS
-                    void process_update_line(string[] line_parsed)
+                    bool process_line_update(string[] line_parsed)
                     {
                         switch (line_parsed[0])
                         {
@@ -110,55 +117,49 @@ namespace PokemonBattler
                             case "start":
                             case "inactive":
                             case "inactiveoff":
-                                break;
+                                return true;
 
                             // turn data
                             case "split":
                                 // todo
-                                break;
+                                return true;
                             case "upkeep":
-                                break;
+                                return true;
                             case "turn":
                                 // todo
-                                break;
+                                return true;
 
                             // turn actions
                             case "switch":
                                 // todo
-                                break;
+                                return true;
                             case "move":
                                 // todo
-                                break;
+                                return true;
 
                             // turn results
                             // todo
 
-#if DEBUG
                             default:
-                                Console.WriteLine($@"Warning: ignored unrecognised message line of type ""{line_parsed[0]}""");
-                                return;
-#endif
+                                return false;
                         }
                     }
-                    void process_sideupdate_line(string[] line_parsed)
+                    bool process_line_sideupdate(string[] line_parsed)
                     {
                         switch (line_parsed[0])
                         {
                             // identifiers
                             case "p1":
                             case "p2":
-                                break;
+                                return true;
 
                             // choice request
                             case "request":
                                 // todo
-                                break;
+                                return true;
 
-#if DEBUG
                             default:
-                                Console.WriteLine($@"Warning: ignored unrecognised message of type ""{msg_type}""");
-                                return;
-#endif
+                                return false;
                         }
                     }
                     #endregion
