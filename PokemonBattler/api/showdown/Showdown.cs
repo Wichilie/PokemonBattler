@@ -70,20 +70,77 @@ namespace PokemonBattler
                 // read a response from showdown
                 private void ReadOutput(object o, DataReceivedEventArgs d)
                 {
-                    string[] message = d.Data.Split('|', StringSplitOptions.RemoveEmptyEntries);
+                    string[] parsed_output = d.Data.Split('|', StringSplitOptions.RemoveEmptyEntries);
                     // ignore empty messages
-                    if (message.Length == 0)
+                    if (parsed_output.Length == 0)
                     {
                         return;
                     }
 
                     // handle the different message types
-                    switch (message[0])
+                    switch (parsed_output[0])
                     {
-                        // todo
-                        default:
-                            Console.WriteLine($@"Warning: unhandled message of type ""{message[0]}"": {d.Data}");
+                        #region UPDATE
+                        case "update":
+                            // todo
                             break;
+
+                        // metadata (irrelevant for us)
+                        case "player":
+                        case "teamsize":
+                        case "gametype":
+                        case "gen":
+                        case "tier":
+                        case "rated":
+                        case "rule":
+                        case "start":
+                        case "inactive":
+                        case "inactiveoff":
+                            break;
+
+                        // turn data
+                        case "split":
+                            // todo
+                            break;
+                        case "upkeep":
+                            break;
+                        case "turn":
+                            // todo
+                            break;
+
+                        // turn actions
+                        case "switch":
+                            // todo
+                            break;
+                        case "move":
+                            // todo
+                            break;
+                        
+                        // turn results
+                        // todo
+                        #endregion
+
+                        #region SIDEUPDATE
+                        case "sideupdate":
+                            // todo
+                            break;
+
+                        // identifiers
+                        case "p1":
+                        case "p2":
+                            break;
+
+                        // choice request
+                        case "request":
+                            // todo
+                            break;
+                        #endregion
+
+                        #region UNIDENTIFIED
+                        default:
+                            Console.WriteLine($@"Warning: unhandled message of type ""{parsed_output[0]}"": {d.Data}");
+                            break;
+                            #endregion
                     }
                 }
             }
