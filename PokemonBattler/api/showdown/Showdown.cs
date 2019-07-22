@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 
+using Newtonsoft.Json.Linq;
+
 namespace PokemonBattler
 {
     namespace BattleAPI
@@ -9,8 +11,8 @@ namespace PokemonBattler
         {
             class Showdown : IBattleAPI
             {
-                private Process showdown;
-                private BattleState state;
+                Process showdown;
+                BattleState state;
 
                 public void InitSimulator()
                 {
@@ -39,8 +41,11 @@ namespace PokemonBattler
                         throw new Exception("Could not start Showdown instance.");
                     }
 
+                    // create a new battle state
+                    state = new BattleState();
+
                     // initialise the battle
-                    GiveCommand(@">start {""formatid"":""gen7randombattle"", ""p1"":{""name"":""bot1""}, ""p2"":{""name"":""bot2""}}");
+                    GiveCommand(@">start {""formatid"":""gen7randombattle"", ""p1"":{""name"":""p1""}, ""p2"":{""name"":""p2""}}");
                 }
 
                 public BattleState GetState()
@@ -53,9 +58,9 @@ namespace PokemonBattler
                 }
 
                 // pass a command to showdown
-                private void GiveCommand(string cmd)
+                private void GiveCommand(string command)
                 {
-                    showdown.StandardInput.WriteLine(cmd);
+                    showdown.StandardInput.WriteLine(command);
                     ProcessOutput();
                 }
                 // process a response from showdown
@@ -102,11 +107,35 @@ namespace PokemonBattler
                     }
 
                     #region LINE_PROCESSORS
+                    bool process_line_sideupdate(string[] line_parsed)
+                    {
+                        switch (line_parsed[0])
+                        {
+                            // identifiers
+                            case "p1":
+                            case "p2":
+                                // irrelevant, also present in request line
+                                return true;
+
+                            // choice request
+                            case "request":
+                                // update the player's state to match the data provided
+                                JObject request = JObject.Parse(line_parsed[1]);
+                                JObject request_side = (JObject)request["side"];
+
+                                state.players[(string)request_side["id"]].state_self = (JArray)request_side["pokemon"];
+
+                                return true;
+
+                            default:
+                                return false;
+                        }
+                    }
                     bool process_line_update(string[] line_parsed)
                     {
                         switch (line_parsed[0])
                         {
-                            // metadata (irrelevant for us)
+                            // metadata
                             case "player":
                             case "teamsize":
                             case "gametype":
@@ -117,46 +146,25 @@ namespace PokemonBattler
                             case "start":
                             case "inactive":
                             case "inactiveoff":
+                                // irrelevant, battle settings are already known because we initialised the battle
                                 return true;
 
                             // turn data
                             case "split":
-                                // todo
-                                return true;
+                                return true; // todo
                             case "upkeep":
-                                return true;
+                                return true; // todo
                             case "turn":
-                                // todo
-                                return true;
+                                return true; // todo
 
                             // turn actions
                             case "switch":
-                                // todo
-                                return true;
+                                return true; // todo
                             case "move":
-                                // todo
-                                return true;
+                                return true; // todo
 
                             // turn results
                             // todo
-
-                            default:
-                                return false;
-                        }
-                    }
-                    bool process_line_sideupdate(string[] line_parsed)
-                    {
-                        switch (line_parsed[0])
-                        {
-                            // identifiers
-                            case "p1":
-                            case "p2":
-                                return true;
-
-                            // choice request
-                            case "request":
-                                // todo
-                                return true;
 
                             default:
                                 return false;
