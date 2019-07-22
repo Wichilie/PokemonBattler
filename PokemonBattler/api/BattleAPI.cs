@@ -1,3 +1,4 @@
+using System.Text;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
@@ -17,6 +18,11 @@ namespace PokemonBattler
                 state_self = new JArray();
                 state_opponent = new JArray();
             }
+
+            public override string ToString()
+            {
+                return $"State:\n{state_self.ToString()}\n\nOpponent state:\n{state_opponent.ToString()}";
+            }
         }
         class BattleState
         {
@@ -33,6 +39,21 @@ namespace PokemonBattler
                     { "p2", new PlayerState("p2") }
                 };
                 battlefield = new JObject(); // todo
+            }
+
+            public override string ToString()
+            {
+                StringBuilder string_builder = new StringBuilder();
+
+                // add all players
+                foreach (KeyValuePair<string, PlayerState> kvp in players)
+                {
+                    string_builder.Append($"PLAYER {kvp.Key}:\n{kvp.Value.ToString()}\n\n");
+                }
+                // add the battlefield
+                string_builder.Append($"BATTLEFIELD:\n{battlefield.ToString()}");
+
+                return string_builder.ToString();
             }
         }
 
