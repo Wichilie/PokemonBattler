@@ -61,7 +61,8 @@ namespace PokemonBattler
                 private void GiveCommand(string command)
                 {
                     showdown.StandardInput.WriteLine(command);
-                    ProcessOutput();
+                    // read the response
+                    ProcessOutput(); ProcessOutput(); ProcessOutput(); // todo
                 }
                 // process a response from showdown
                 private void ProcessOutput()
@@ -84,7 +85,7 @@ namespace PokemonBattler
 #endif
                     }
 
-                    // feed each individual message line to the line processor, while the delimiter (a double line ending) has not been reached
+                    // feed each individual line to the line processor, while the delimiter (a double line ending) has not been reached
                     string msg_line;
                     string[] msg_line_parsed;
                     while ((msg_line = showdown.StandardOutput.ReadLine()) != "")
@@ -106,6 +107,7 @@ namespace PokemonBattler
 #endif
                     }
 
+                    // process a single message line
                     #region LINE_PROCESSORS
                     bool process_line_sideupdate(string[] line_parsed)
                     {
