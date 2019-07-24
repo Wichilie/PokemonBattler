@@ -45,7 +45,7 @@ namespace PokemonBattler
                     state = new BattleState();
 
                     // initialise the battle
-                    GiveCommand(@">start {""formatid"":""gen7randombattle"", ""p1"":{""name"":""p1""}, ""p2"":{""name"":""p2""}}");
+                    GiveCommand(@">start {""formatid"":""gen7randombattle"", ""p1"":{""name"":""bot1""}, ""p2"":{""name"":""bot2""}}");
                 }
 
                 public BattleState GetState()
@@ -153,7 +153,16 @@ namespace PokemonBattler
 
                             // turn data
                             case "split":
-                                return true; // todo
+                                // get the secret player ID
+                                string player = line_parsed[1];
+
+                                // ignore the secret (can be inferred from REQUEST message)
+                                Console.ReadLine();
+
+                                // the public message will be processed like any other
+
+                                return true;
+
                             case "upkeep":
                                 return true; // todo
                             case "turn":
