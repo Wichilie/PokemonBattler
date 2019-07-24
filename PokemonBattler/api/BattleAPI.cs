@@ -13,10 +13,15 @@ namespace PokemonBattler
             public JArray state_self { get; set; }
             public JArray state_opponent { get; set; }
 
-            public PlayerState(string p)
+            public PlayerState()
             {
                 state_self = new JArray();
                 state_opponent = new JArray();
+            }
+
+            public bool UpdateOpponentState()
+            {
+                return false; // todo
             }
 
             public override string ToString()
@@ -35,8 +40,8 @@ namespace PokemonBattler
             {
                 players = new Dictionary<string, PlayerState>
                 {
-                    { "p1", new PlayerState("p1") },
-                    { "p2", new PlayerState("p2") }
+                    { "p1", new PlayerState() },
+                    { "p2", new PlayerState() }
                 };
                 battlefield = new JObject(); // todo
             }
