@@ -29,7 +29,7 @@ namespace PokemonBattler
                             FileName = "node",
                             Arguments = "Middleman.js",
                             WorkingDirectory = "./PokemonBattler/api/showdown/",
-                            CreateNoWindow = true,
+                            CreateNoWindow = false,
                             UseShellExecute = false,
                             RedirectStandardError = true,
                             RedirectStandardInput = true,
@@ -157,10 +157,9 @@ namespace PokemonBattler
                                 string player = line_parsed[1];
 
                                 // ignore the secret (can be inferred from REQUEST message)
-                                Console.ReadLine();
+                                showdown.StandardOutput.ReadLine();
 
                                 // the public message will be processed like any other
-
                                 return true;
 
                             case "upkeep":
@@ -170,7 +169,19 @@ namespace PokemonBattler
 
                             // turn actions
                             case "switch":
-                                return true; // todo
+                            string[] delimited_player_id_and_pokemon_name = line_parsed[1].Split(' ');
+                            string player_id = delimited_player_id_and_pokemon_name[0].Substring(0,2);
+                            string pokemon_name = delimited_player_id_and_pokemon_name[1];
+                            
+
+                            string[] delimited_percentage_hp = line_parsed[3].Split('/');
+                            int pokemon_percentage_hp = Int32.Parse(delimited_percentage_hp[0]);
+#if DEBUG                            
+                            Console.WriteLine($@"Player ID: {player_id}");
+                            Console.WriteLine($@"Pokemon name: {pokemon_name}");
+                            Console.WriteLine($@"Pokemon percentage HP: {pokemon_percentage_hp}");
+#endif                           
+                                return true; // todo save
                             case "move":
                                 return true; // todo
 
